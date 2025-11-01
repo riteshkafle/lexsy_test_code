@@ -1,0 +1,22 @@
+{% set filled_count = filled if filled is defined else session.get('filled_count', 0) %}
+{% set total_count = total if total is defined else session.get('total_placeholders', 0) %}
+{% if total_count %}
+  {% set percent = ((filled_count / total_count) * 100) | round(0, 'floor') %}
+{% elif filled_count %}
+  {% set percent = 100 %}
+{% else %}
+  {% set percent = 0 %}
+{% endif %}
+<div id="progress-pill"
+     class="progress-pill"
+     hx-get="{{ url_for('progress_badge') }}"
+     hx-trigger="load, mapping-updated from:body"
+     hx-swap="outerHTML">
+  <div class="pill-label">
+    <span>Progress</span>
+    <strong>{% if total_count %}{{ filled_count }}/{{ total_count }}{% else %}--{% endif %}</strong>
+  </div>
+  <div class="pill-track" role="presentation">
+    <div class="pill-bar" style="width: {{ percent }}%;"></div>
+  </div>
+</div>

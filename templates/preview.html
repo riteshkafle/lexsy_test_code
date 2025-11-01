@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="workspace-grid preview-grid">
+  <section class="panel panel-main">
+    <header class="panel-header">
+      <h2>Preview document</h2>
+      <p class="panel-subtitle">Best-effort HTML render. Download the .docx for pixel-perfect formatting.</p>
+    </header>
+
+    {% if missing_items %}
+      <div class="alert warning">
+        <div>
+          <strong>{{ missing_items|length }} placeholder{{ 's' if missing_items|length != 1 }} still need attention.</strong>
+          <span>Head back to the chat to finish them.</span>
+        </div>
+        <a class="btn btn-secondary" href="{{ url_for('chat') }}">Return to chat</a>
+      </div>
+    {% endif %}
+
+    <div class="preview-summary">
+      <div class="stat">
+        <span class="stat-label">Document</span>
+        <span class="stat-value">{{ doc_name or 'Untitled document' }}</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Filled placeholders</span>
+        <span class="stat-value">{{ filled }}/{{ total }}</span>
+      </div>
+    </div>
+
+    <div class="preview-output">
+      <pre>{{ preview_text }}</pre>
+    </div>
+
+    <footer class="panel-footer">
+      <a class="btn" href="{{ url_for('download_docx') }}">Download .docx</a>
+      <a class="btn btn-secondary" href="{{ url_for('chat') }}">Back to chat</a>
+    </footer>
+  </section>
+
+  <aside class="panel panel-sidebar">
+    <div class="card-header">
+      <h3>Answer sheet</h3>
+      <span class="badge badge-ghost">{{ filled }}/{{ total }} filled</span>
+    </div>
+    <table class="answers-table">
+      <thead>
+        <tr>
+          <th>Placeholder</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in placeholder_items %}
+          <tr class="{% if item.is_filled %}filled{% else %}pending{% endif %}">
+            <td>
+              <div class="placeholder-key">{{ item.label }}</div>
+              {% if item.raw and item.label != item.raw %}
+                <div class="placeholder-raw">{{ item.raw }}</div>
+              {% endif %}
+            </td>
+            <td>
+              {% if item.value is not none and item.value != '' %}
+                <span>{{ item.value }}</span>
+              {% else %}
+                <span class="pending-text">Not filled</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </aside>
+</div>
+{% endblock %}

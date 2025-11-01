@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <div class="hero-text">
+    <span class="eyebrow">Test assignment · end-to-end demo</span>
+    <h1>Complete legal document drafts without leaving the browser.</h1>
+    <p>Upload a <code>.docx</code> template, let the assistant detect placeholders, answer a guided chat, and export a finished agreement instantly.</p>
+    <ul class="feature-list">
+      <li>Smart placeholder detection for bracketed tokens like <code>[Company Name]</code>.</li>
+      <li>Conversational flow that keeps context, lets you revise, and tracks progress.</li>
+      <li>Live preview plus a downloadable, production-ready Word document.</li>
+    </ul>
+    {% if session.get('doc_path') %}
+      <div class="resume-banner">
+        <div>
+          <span class="resume-label">In progress</span>
+          <strong>{{ session.get('doc_name') or 'Your document' }}</strong>
+          <span class="resume-progress">{{ (session.get('filled_count') or 0) }}/{{ (session.get('total_placeholders') or 0) }} filled</span>
+        </div>
+        <a class="btn btn-ghost" href="{{ url_for('chat') }}">Resume</a>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="hero-card card">
+    <div class="card-header">
+      <h2>Start with your template</h2>
+      <p>Supports Word documents with bracket-style placeholders. We’ll highlight anything we find.</p>
+    </div>
+    <form class="upload-form" action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
+      <label class="file-picker">
+        <input type="file" name="file" accept=".docx" required>
+        <span>Choose a .docx file</span>
+      </label>
+      <button class="btn" type="submit">Upload & Detect</button>
+    </form>
+    <div class="divider"><span>or</span></div>
+    <form action="{{ url_for('use_sample') }}" method="post">
+      <button class="btn btn-secondary" type="submit">Try the sample SAFE</button>
+    </form>
+    <p class="card-footer-text">The sample is a YC SAFE (post-money, valuation cap). It showcases the full experience instantly.</p>
+  </div>
+</section>
+
+<section class="section-grid">
+  <div class="card">
+    <h3>How it works</h3>
+    <ol class="step-list horizontal">
+      <li class="step done">
+        <span class="step-index">1</span>
+        <div class="step-copy">
+          <strong>Upload</strong>
+          <span>Drop in your Word template.</span>
+        </div>
+      </li>
+      <li class="step current">
+        <span class="step-index">2</span>
+        <div class="step-copy">
+          <strong>Fill via chat</strong>
+          <span>Answer quick prompts for each placeholder.</span>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-index">3</span>
+        <div class="step-copy">
+          <strong>Preview & export</strong>
+          <span>Review the draft and download the final docx.</span>
+        </div>
+      </li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h3>Placeholder examples</h3>
+    <ul class="placeholder-examples">
+      <li><code>[Company Name]</code> &rarr; <span>Acme, Inc.</span></li>
+      <li><code>[Investor Name]</code> &rarr; <span>Jane Doe Ventures</span></li>
+      <li><code>[Date of Safe]</code> &rarr; <span>October 30, 2025</span></li>
+      <li><code>[$_____________]</code> &rarr; <span>$250,000</span></li>
+    </ul>
+  </div>
+</section>
+{% endblock %}

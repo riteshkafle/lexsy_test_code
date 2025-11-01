@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="workspace-grid">
+  <section class="panel panel-main">
+    <header class="panel-header">
+      <h2>Conversational fill</h2>
+      <p class="panel-subtitle">We’ll guide you placeholder by placeholder. Jump around anytime using the tracker.</p>
+    </header>
+    <div id="chat-box" class="chat-window">
+      {% if chat_history %}
+        {% for turn in chat_history %}
+          <div class="bubble {{ 'bot' if turn.role=='bot' else 'you' }}">
+            {% if turn.role == 'bot' %}
+              {{ turn.text | safe }}
+            {% else %}
+              {{ turn.text }}
+            {% endif %}
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="empty-chat">
+          <p>No conversation yet. Upload a document to get started.</p>
+        </div>
+      {% endif %}
+    </div>
+    <div id="chat-input"
+         class="chat-input"
+         hx-get="{{ url_for('chat_input') }}"
+         hx-trigger="load, mapping-updated from:body"
+         hx-swap="innerHTML"
+         hx-on::after-settle="this.querySelector('input[name=message]')?.focus();">
+      {% include "partials/chat_input.html" %}
+    </div>
+    <footer class="panel-footer">
+      <span class="footer-note">Need a clean slate? <a href="{{ url_for('reset') }}">Reset the session</a>.</span>
+    </footer>
+  </section>
+
+  <aside id="chat-sidebar"
+         class="panel panel-sidebar"
+         hx-get="{{ url_for('chat_sidebar') }}"
+         hx-trigger="load, mapping-updated from:body"
+         hx-swap="innerHTML">
+    {% include "partials/chat_sidebar.html" %}
+  </aside>
+</div>
+{% endblock %}

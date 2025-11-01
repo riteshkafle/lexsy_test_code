@@ -1,0 +1,39 @@
+{% set input_placeholder = "Answer for " ~ (active_label or active_raw or 'this placeholder') %}
+{% if next_key %}
+  <div class="prompt-block">
+    {% if prompt_text %}
+      <p class="prompt-text">{{ prompt_text | safe }}</p>
+    {% endif %}
+    {% if active_value is not none and active_value != '' %}
+      <p class="prompt-helper">Current value: <span>{{ active_value }}</span></p>
+    {% endif %}
+  </div>
+  <form class="chat-form"
+        hx-post="{{ url_for('answer') }}"
+        hx-target="#chat-box"
+        hx-swap="beforeend"
+        hx-on::after-request="this.reset(); this.querySelector('input[name=message]').focus();">
+    <input type="hidden" name="key" value="{{ next_key }}">
+    <div class="input-row">
+      <input class="text-input"
+             name="message"
+             type="text"
+             value="{{ active_value or '' }}"
+             placeholder="{{ input_placeholder }}"
+             autocomplete="off"
+             required>
+      <button class="btn" type="submit">Save</button>
+    </div>
+    <div class="input-hint">
+      <span>Press Enter to submit</span>
+    </div>
+  </form>
+{% else %}
+  <div class="prompt-block done">
+    <p><strong>All placeholders are filled.</strong> Review the draft or download the finished document.</p>
+    <div class="button-row">
+      <a class="btn" href="{{ url_for('preview') }}">Preview</a>
+      <a class="btn btn-secondary" href="{{ url_for('download_docx') }}">Download .docx</a>
+    </div>
+  </div>
+{% endif %}

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Legal Doc Co-Pilot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  </head>
+  <body>
+    <div class="canvas">
+      <header class="site-header">
+        <div class="container header-inner">
+          <a class="brand" href="{{ url_for('index') }}">
+            <span class="brand-mark">⚖️</span>
+            <div class="brand-text">
+              <span class="brand-title">Legal Doc Co-Pilot</span>
+              <span class="brand-subtitle">Guided placeholder filling for legal templates.</span>
+            </div>
+          </a>
+          <div class="header-controls">
+            <nav class="header-nav" aria-label="Primary">
+              <a class="nav-link" href="{{ url_for('index') }}">Upload</a>
+              {% if session.get('doc_path') %}
+                <a class="nav-link" href="{{ url_for('chat') }}">Chat</a>
+                <a class="nav-link" href="{{ url_for('preview') }}">Preview</a>
+                <a class="nav-link" href="{{ url_for('download_docx') }}">Download</a>
+              {% else %}
+                <span class="nav-link is-disabled">Chat</span>
+                <span class="nav-link is-disabled">Preview</span>
+                <span class="nav-link is-disabled">Download</span>
+              {% endif %}
+            </nav>
+            {% include "partials/progress_badge.html" %}
+          </div>
+        </div>
+      </header>
+      <main class="page">
+        <div class="container">
+          {% block content %}{% endblock %}
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

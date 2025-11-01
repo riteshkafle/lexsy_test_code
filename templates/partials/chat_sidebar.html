@@ -1,0 +1,108 @@
+<div class="sidebar-stack">
+    <section class="sidebar-card highlight">
+      <div class="card-header">
+        <h3>Document overview</h3>
+      </div>
+      <p class="doc-name">{{ doc_name or 'No document loaded yet' }}</p>
+      <dl class="metrics">
+        <div>
+          <dt>Total placeholders</dt>
+          <dd>{{ total }}</dd>
+        </div>
+        <div>
+          <dt>Filled</dt>
+          <dd>{{ filled }}</dd>
+        </div>
+        <div>
+          <dt>Remaining</dt>
+          <dd>{{ remaining }}</dd>
+        </div>
+      </dl>
+      <div class="progress-track" aria-hidden="true">
+        <div class="progress-bar" style="width: {{ progress_pct }}%;"></div>
+      </div>
+    </section>
+  
+    <section class="sidebar-card">
+      <div class="card-header">
+        <h3>Placeholder tracker</h3>
+        {% if has_remaining and total %}
+          <span class="badge badge-ghost">{{ remaining }} left</span>
+        {% elif total %}
+          <span class="badge badge-success">Complete</span>
+        {% endif %}
+      </div>
+  
+      {% if placeholder_items %}
+        <ul class="placeholder-list">
+          {% for item in placeholder_items %}
+            <li class="placeholder-item {% if item.is_active %}active{% endif %} {% if item.is_filled %}filled{% endif %}">
+              <div class="placeholder-summary">
+                <div class="placeholder-label">
+                  <span class="placeholder-key">{{ item.label }}</span>
+                  {% if item.raw and item.label != item.raw %}
+                    <span class="placeholder-raw">{{ item.raw }}</span>
+                  {% endif %}
+                </div>
+                {% if item.value is not none and item.value != '' %}
+                  <div class="placeholder-value" title="{{ item.value }}">{{ item.value }}</div>
+                {% endif %}
+              </div>
+              <div class="placeholder-actions">
+                <form action="{{ url_for('set_current') }}" method="post">
+                  <input type="hidden" name="key" value="{{ item.raw }}">
+                  <button class="link-btn" type="submit" {% if item.is_active %}disabled{% endif %}>
+                    {% if item.is_active %}
+                      Filling now
+                    {% elif item.is_filled %}
+                      Edit
+                    {% else %}
+                      Jump to
+                    {% endif %}
+                  </button>
+                </form>
+                {% if item.is_filled %}
+                  <form action="{{ url_for('clear_answer') }}" method="post">
+                    <input type="hidden" name="key" value="{{ item.raw }}">
+                    <button class="link-btn danger" type="submit">Clear</button>
+                  </form>
+                {% endif %}
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="empty-state">Placeholders will appear here once we detect them.</p>
+      {% endif %}
+    </section>
+  
+    <section class="sidebar-card secondary">
+      <div class="card-header">
+        <h3>Workflow steps</h3>
+      </div>
+      <ol class="step-list">
+        <li class="step {% if document_ready %}done{% endif %}">
+          <span class="step-index">1</span>
+          <div class="step-copy">
+            <strong>Upload template</strong>
+            <span>Accepts .docx legal templates.</span>
+          </div>
+        </li>
+        <li class="step {% if filled %}done{% elif has_placeholders %}current{% endif %}">
+          <span class="step-index">2</span>
+          <div class="step-copy">
+            <strong>Chat & fill</strong>
+            <span>Answer questions to populate placeholders.</span>
+          </div>
+        </li>
+        <li class="step {% if total and not has_remaining %}current{% endif %}">
+          <span class="step-index">3</span>
+          <div class="step-copy">
+            <strong>Preview & download</strong>
+            <span>Review the draft, then export the docx.</span>
+          </div>
+        </li>
+      </ol>
+    </section>
+  </div>
+  
