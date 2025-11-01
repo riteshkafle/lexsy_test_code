@@ -43,20 +43,8 @@ PY
 python app.py
 # or: FLASK_SECRET_KEY=dev python app.py
 
-# 4) Open http://localhost:8080
+# 4) Open to local host 
 ```
-
-
-## Deploy (Render)
-
-1. Push this folder to a new GitHub repo (public or private).
-2. On Render: **New +** → **Web Service** → connect the repo.
-3. **Environment**: Python.
-4. **Build Command**: `pip install -r requirements.txt`
-5. **Start Command**: `gunicorn app:app --preload --workers=2 --threads=4 --timeout=120`
-6. **Environment Variable**: `FLASK_SECRET_KEY` (set to any long random string).
-
-You’ll get a public URL like `https://your-app.onrender.com`.
 
 
 ## Test Credentials
